@@ -2,11 +2,12 @@ package gojenkins
 
 import (
 	"fmt"
-	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"math/rand"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 var (
@@ -28,6 +29,7 @@ func TestCreateJobs(t *testing.T) {
 	if err != nil {
 		fmt.Print(err)
 	}
+	fmt.Println(job1.Raw)
 	assert.Equal(t, "Some Job Description", job1.GetDescription())
 	assert.Equal(t, job1ID, job1.GetName())
 

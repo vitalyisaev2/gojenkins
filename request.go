@@ -18,6 +18,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"mime/multipart"
@@ -252,6 +253,10 @@ func (r *Requester) ReadRawResponse(responseStruct interface{}) (*http.Response,
 
 func (r *Requester) ReadJSONResponse(responseStruct interface{}) *http.Response {
 	defer r.LastResponse.Body.Close()
+
+	b, _ := ioutil.ReadAll(r.LastResponse.Body)
+	fmt.Printf("ReadJSONResponse: body: %s\n", string(b))
+
 	json.NewDecoder(r.LastResponse.Body).Decode(responseStruct)
 	return r.LastResponse
 }
