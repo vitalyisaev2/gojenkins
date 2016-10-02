@@ -91,6 +91,7 @@ func (r *Requester) GetJSON(endpoint string, responseStruct interface{}, queryst
 func (r *Requester) GetXML(endpoint string, responseStruct interface{}, querystring map[string]string) (*http.Response, error) {
 	r.SetHeader("Content-Type", "application/xml")
 	r.Suffix = ""
+	fmt.Printf("GetXML: endpoint %s, responseStruct %v, %T\n", endpoint, responseStruct, responseStruct)
 	return r.Do("GET", endpoint, nil, responseStruct, querystring)
 }
 
@@ -225,13 +226,18 @@ func (r *Requester) Do(method string, endpoint string, payload io.Reader, respon
 
 	switch responseStruct.(type) {
 	case *string:
+		s, _ := responseStruct.(*string)
+		fmt.Printf("DO: *string before: %s (%T)\n", *s, responseStruct)
 		rawResponse, err := r.ReadRawResponse(responseStruct)
 		if err != nil {
 			return nil, err
 		}
+		fmt.Printf("DO: *string after: %s (%T)\n", *s, responseStruct)
 		return rawResponse, nil
 	default:
+		fmt.Printf("DO: default before: %v (%T)\n", responseStruct, responseStruct)
 		jsonResponse := r.ReadJSONResponse(responseStruct)
+		fmt.Printf("DO: default after: %v (%T)\n", responseStruct, responseStruct)
 		return jsonResponse, nil
 	}
 }
@@ -254,9 +260,7 @@ func (r *Requester) ReadRawResponse(responseStruct interface{}) (*http.Response,
 func (r *Requester) ReadJSONResponse(responseStruct interface{}) *http.Response {
 	defer r.LastResponse.Body.Close()
 
-	fmt.Printf("ReadJSONResponse: before: %v\n", responseStruct)
 	json.NewDecoder(r.LastResponse.Body).Decode(responseStruct)
-	fmt.Printf("ReadJSONResponse: after: %v\n", responseStruct)
 
 	return r.LastResponse
 }
